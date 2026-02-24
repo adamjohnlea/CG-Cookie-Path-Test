@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CG Cookie — Learning Path Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d10;
+    --surface: #16161c;
+    --surface2: #1e1e28;
+    --border: #2a2a38;
+    --border-hover: #3e3e58;
+    --orange: #f5a623;
+    --orange-dim: rgba(245,166,35,0.10);
+    --orange-glow: rgba(245,166,35,0.22);
+    --orange-border: rgba(245,166,35,0.35);
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --muted2: #4a4a60;
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1000px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(245,166,35,0.05) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    padding: 28px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .restart-btn {
+    display: none;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .restart-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .restart-btn.visible { display: block; }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    margin-top: 36px;
+    display: none;
+  }
+  .progress-wrap.visible { display: block; }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    transition: color 0.3s;
+  }
+  .progress-label.active { color: var(--orange); }
+  .progress-label.done { color: var(--muted); }
+
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  /* ── Screens ── */
+  .screen {
+    display: none;
+    animation: fadeUp 0.45s ease both;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Hero (screen 0) ── */
+  .hero {
+    padding: 70px 0 56px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 10vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+  }
+
+  h1 .accent { color: var(--orange); }
+
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .start-btn {
+    margin-top: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    background: var(--orange);
+    color: #0d0d10;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .start-btn:hover { background: #fbb63d; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(245,166,35,0.3); }
+
+  /* ── Step header ── */
+  .step-header {
+    padding: 52px 0 36px;
+  }
+
+  .step-number {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .step-q {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 6vw, 54px);
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .step-hint {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--muted);
+  }
+
+  /* ── Option cards ── */
+  .options-grid {
+    display: grid;
+    gap: 12px;
+  }
+  .options-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .options-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .opt-card {
+    padding: 20px 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .opt-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--orange-dim);
+    opacity: 0;
+    transition: opacity 0.18s;
+  }
+
+  .opt-card:hover { border-color: var(--border-hover); }
+  .opt-card:hover::before { opacity: 1; }
+
+  .opt-card.selected {
+    border-color: var(--orange);
+    background: var(--surface);
+  }
+  .opt-card.selected::before { opacity: 1; }
+
+  .opt-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  .opt-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .opt-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+  }
+
+  .opt-check {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #0d0d10;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 2;
+  }
+  .opt-card.selected .opt-check { opacity: 1; transform: scale(1); }
+
+  /* Version pills (step 3 for upgraders) */
+  .version-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .vpill {
+    padding: 10px 22px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .vpill:hover { border-color: var(--orange); color: var(--orange); }
+  .vpill.selected { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+
+  /* ── Nav buttons ── */
+  .step-nav {
+    margin-top: 36px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-next {
+    padding: 14px 32px;
+    background: var(--orange);
+    color: #0d0d10;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .btn-next.enabled { opacity: 1; pointer-events: all; }
+  .btn-next.enabled:hover { background: #fbb63d; transform: translateY(-1px); }
+
+  .btn-back {
+    padding: 14px 20px;
+    background: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-back:hover { color: var(--text); border-color: var(--border-hover); }
+
+  .skip-link {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s;
+  }
+  .skip-link:hover { color: var(--text); }
+
+  /* ── Results ── */
+  .result-header {
+    padding: 52px 0 0;
+  }
+
+  .path-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-dim);
+    border: 1px solid rgba(74,222,128,0.25);
+    color: var(--green);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  .path-badge::before { content: '●'; font-size: 8px; }
+
+  .path-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 7vw, 72px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+  }
+
+  .path-title .accent { color: var(--orange); }
+
+  .path-summary {
+    margin-top: 18px;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 620px;
+    border-left: 2px solid var(--border);
+    padding-left: 16px;
+  }
+
+  /* Version alert */
+  .version-alert {
+    margin-top: 24px;
+    padding: 14px 18px;
+    background: var(--orange-dim);
+    border: 1px solid var(--orange-border);
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    display: none;
+  }
+  .version-alert.show { display: block; }
+  .version-alert strong { color: var(--orange); }
+
+  /* Course steps */
+  .path-courses {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .path-step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 0;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  /* Connector line */
+  .step-spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    margin-top: 20px;
+  }
+
+  .path-step:first-child .step-dot {
+    background: var(--orange-dim);
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  .step-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin: 4px 0;
+    min-height: 20px;
+  }
+
+  .path-step:last-child .step-line { display: none; }
+
+  /* Course card */
+  .course-card {
+    margin: 12px 0 16px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .course-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--orange);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .course-card:hover {
+    border-color: rgba(245,166,35,0.4);
+    transform: translateX(4px);
+  }
+  .course-card:hover::before { opacity: 1; }
+
+  .course-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .cat-tag {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .cat-tag.highlight {
+    background: var(--orange-dim);
+    color: var(--orange);
+    border-color: var(--orange-border);
+  }
+
+  .version-tag {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(124,106,247,0.12);
+    color: #a89cf7;
+    border: 1px solid rgba(124,106,247,0.25);
+  }
+
+  .course-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .course-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .course-why {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--orange);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .course-link-hint {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted2);
+    font-size: 18px;
+    transition: all 0.2s;
+  }
+  .course-card:hover .course-link-hint { color: var(--orange); transform: translateY(-50%) translate(2px, -2px); }
+
+  /* Secondary suggestion */
+  .secondary-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .secondary-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .also-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+  }
+
+  .also-card {
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .also-card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+
+  .also-icon { font-size: 20px; margin-top: 1px; flex-shrink: 0; }
+
+  .also-text .also-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .also-text .also-cats { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .options-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+    .options-grid.cols-2 { grid-template-columns: 1fr; }
+    .path-step { grid-template-columns: 44px 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <div class="brand">CG Cookie · Path Finder</div>
+    <button class="restart-btn" id="restartBtn">↺ Start Over</button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-labels">
+      <span class="progress-label" id="pl1">Experience</span>
+      <span class="progress-label" id="pl2">Focus</span>
+      <span class="progress-label" id="pl3">Details</span>
+      <span class="progress-label" id="pl4">Your Path</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ────────────────── SCREEN 0: HERO ────────────────── -->
+  <div class="screen active" id="s0">
+    <div class="hero">
+      <div class="eyebrow">Personalized Learning</div>
+      <h1>Find your<br><span class="accent">path</span> in<br>Blender</h1>
+      <p class="hero-sub">Answer 3 quick questions and we'll build a custom learning sequence from CG Cookie's course library — tailored to where you are and where you want to go.</p>
+      <button class="start-btn" onclick="goTo(1)">Build My Path →</button>
+    </div>
+  </div>
+
+  <!-- ────────────────── SCREEN 1: EXPERIENCE ────────────────── -->
+  <div class="screen" id="s1">
+    <div class="step-header">
+      <div class="step-number">Step 1 of 3</div>
+      <div class="step-q">Where are you starting from?</div>
+      <div class="step-hint">Be honest — there's a great path for every level.</div>
+    </div>
+
+    <div class="options-grid cols-1" style="max-width:580px">
+      <div class="opt-card" data-group="level" data-val="beginner" onclick="pick(this)">
+        <span class="opt-icon">🌱</span>
+        <div class="opt-title">Complete Beginner</div>
+        <div class="opt-desc">I've never used Blender, or only opened it once or twice. Start me at the very beginning.</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="level" data-val="some" onclick="pick(this)">
+        <span class="opt-icon">⚡</span>
+        <div class="opt-title">Some Experience</div>
+        <div class="opt-desc">I know my way around the interface but want to go deeper in specific areas.</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="level" data-val="upgrade" onclick="pick(this)">
+        <span class="opt-icon">🔄</span>
+        <div class="opt-title">Upgrading from an Older Version</div>
+        <div class="opt-desc">I know Blender 2.7, 2.8, or 3.x and need to get up to speed with modern Blender.</div>
+        <div class="opt-check">✓</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-next" id="next1" onclick="goTo(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ────────────────── SCREEN 2: FOCUS ────────────────── -->
+  <div class="screen" id="s2">
+    <div class="step-header">
+      <div class="step-number">Step 2 of 3</div>
+      <div class="step-q">What do you want to create?</div>
+      <div class="step-hint">Pick the topic that excites you most right now.</div>
+    </div>
+
+    <div class="options-grid cols-3">
+      <div class="opt-card" data-group="focus" data-val="animation" onclick="pick(this)">
+        <span class="opt-icon">🎬</span>
+        <div class="opt-title">Animation</div>
+        <div class="opt-desc">Bring objects or characters to life with motion</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="modeling" onclick="pick(this)">
+        <span class="opt-icon">🧊</span>
+        <div class="opt-title">3D Modeling</div>
+        <div class="opt-desc">Hard surfaces, props, and precision mesh work</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="sculpting" onclick="pick(this)">
+        <span class="opt-icon">🗿</span>
+        <div class="opt-title">Sculpting</div>
+        <div class="opt-desc">Organic shapes, creatures, and characters</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="rigging" onclick="pick(this)">
+        <span class="opt-icon">🦴</span>
+        <div class="opt-title">Rigging</div>
+        <div class="opt-desc">Bones, armatures, and preparing models to move</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="materials" onclick="pick(this)">
+        <span class="opt-icon">🎨</span>
+        <div class="opt-title">Materials & Shading</div>
+        <div class="opt-desc">Textures, shaders, PBR workflows</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="rendering" onclick="pick(this)">
+        <span class="opt-icon">💡</span>
+        <div class="opt-title">Lighting & Rendering</div>
+        <div class="opt-desc">Illuminate scenes and produce stunning final images</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="vfx" onclick="pick(this)">
+        <span class="opt-icon">💥</span>
+        <div class="opt-title">VFX & Simulations</div>
+        <div class="opt-desc">Fire, smoke, fluid, cloth, particles</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="gameart" onclick="pick(this)">
+        <span class="opt-icon">🎮</span>
+        <div class="opt-title">Game Art</div>
+        <div class="opt-desc">Assets, low poly, game engine pipelines</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="character" onclick="pick(this)">
+        <span class="opt-icon">🧍</span>
+        <div class="opt-title">Full Character Pipeline</div>
+        <div class="opt-desc">Model → sculpt → rig → animate a character</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="grease" onclick="pick(this)">
+        <span class="opt-icon">✏️</span>
+        <div class="opt-title">2D / Grease Pencil</div>
+        <div class="opt-desc">Illustration and 2D animation inside Blender</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="scripting" onclick="pick(this)">
+        <span class="opt-icon">🐍</span>
+        <div class="opt-title">Python Scripting</div>
+        <div class="opt-desc">Automate and extend Blender with code</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="focus" data-val="compositing" onclick="pick(this)">
+        <span class="opt-icon">🎞</span>
+        <div class="opt-title">Compositing</div>
+        <div class="opt-desc">Post-processing, render passes, and node compositing</div>
+        <div class="opt-check">✓</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn-next" id="next2" onclick="goTo(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ────────────────── SCREEN 3: DETAILS (conditional) ────────────────── -->
+  <div class="screen" id="s3">
+    <div class="step-header">
+      <div class="step-number">Step 3 of 3</div>
+      <div class="step-q" id="s3q">Almost there…</div>
+      <div class="step-hint" id="s3hint"></div>
+    </div>
+
+    <!-- For beginners/some experience: secondary goal -->
+    <div id="s3-goals">
+      <div class="options-grid cols-2">
+        <div class="opt-card" data-group="goal" data-val="fundamentals" onclick="pick(this)">
+          <span class="opt-icon">📚</span>
+          <div class="opt-title">I want solid fundamentals</div>
+          <div class="opt-desc">Prioritize the building blocks before jumping into projects</div>
+          <div class="opt-check">✓</div>
+        </div>
+        <div class="opt-card" data-group="goal" data-val="project" onclick="pick(this)">
+          <span class="opt-icon">🚀</span>
+          <div class="opt-title">I learn best by doing projects</div>
+          <div class="opt-desc">Get me making something real as fast as possible</div>
+          <div class="opt-check">✓</div>
+        </div>
+        <div class="opt-card" data-group="goal" data-val="broad" onclick="pick(this)">
+          <span class="opt-icon">🗺️</span>
+          <div class="opt-title">I want broad coverage</div>
+          <div class="opt-desc">Show me how all the pieces fit together</div>
+          <div class="opt-check">✓</div>
+        </div>
+        <div class="opt-card" data-group="goal" data-val="fast" onclick="pick(this)">
+          <span class="opt-icon">⏱️</span>
+          <div class="opt-title">I want the fastest path</div>
+          <div class="opt-desc">Give me the most essential courses only, no detours</div>
+          <div class="opt-check">✓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- For upgraders: version selection -->
+    <div id="s3-version" style="display:none">
+      <div class="version-pills" id="versionPills">
+        <div class="vpill" data-val="2.7" onclick="pickVersion(this)">Blender 2.7x</div>
+        <div class="vpill" data-val="2.8" onclick="pickVersion(this)">Blender 2.8x</div>
+        <div class="vpill" data-val="3x"  onclick="pickVersion(this)">Blender 3.x</div>
+        <div class="vpill" data-val="none" onclick="pickVersion(this)">Not sure</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn-next" id="next3" onclick="buildPath()">Build My Path →</button>
+      <span class="skip-link" onclick="skipStep3()">Skip this step</span>
+    </div>
+  </div>
+
+  <!-- ────────────────── SCREEN 4: RESULTS ────────────────── -->
+  <div class="screen" id="s4">
+    <div class="result-header">
+      <div class="path-badge" id="pathBadge">Learning Path Ready</div>
+      <div class="path-title" id="pathTitle">Your Path</div>
+      <div class="path-summary" id="pathSummary"></div>
+      <div class="version-alert" id="versionAlert"></div>
+    </div>
+
+    <div class="path-courses" id="pathCourses"></div>
+    <div class="secondary-section" id="secondarySection" style="display:none">
+      <div class="secondary-title">Also Worth Exploring</div>
+      <div class="also-grid" id="alsoGrid"></div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ─────────────────────────────────────────────
+//  COURSE DATA
+// ─────────────────────────────────────────────
+const COURSES = {
+  // Beginner / Foundation
+  basics45:  { title:"BLENDER BASICS: Intro to Blender 3D 4.5 LTS", url:"https://cgcookie.com/courses/blender-basics-an-introduction-to-blender-3d-4-5-lts", cats:["Beginner","Fundamentals"], version:"4.5", desc:"The definitive starting point — everything you need to navigate Blender 4.5 LTS from absolute zero." },
+  basics4x:  { title:"BLENDER BASICS: Intro to Blender 3D 4.X",     url:"https://cgcookie.com/courses/blender-basics-an-introduction-to-blender-4-x",         cats:["Beginner","Fundamentals"], version:"4.x", desc:"Get started with the modern Blender 4 interface, viewport navigation, and core workflows." },
+  basics3x:  { title:"BLENDER BASICS: Intro to Blender 3.x",         url:"https://cgcookie.com/courses/blender-3-basics-intro-to-blender",                        cats:["Beginner","Fundamentals"], version:"3.x", desc:"Master the essentials of Blender 3.x from navigating the viewport to working with Blend files." },
+  basics28:  { title:"Learn Blender 2.8 and beyond",                  url:"https://cgcookie.com/courses/learn-blender-2-8-and-beyond-the-basics-tutorial",         cats:["Beginner","Fundamentals"], version:"2.8", desc:"Everything you need to start making 3D models in Blender 2.8." },
+  upgrade27: { title:"Moving from Blender 2.7 to 2.8",               url:"https://cgcookie.com/courses/moving-from-blender-2-7-to-2-8",                           cats:["Fundamentals"],           version:"2.8", desc:"Fast-track your 2.7 knowledge into the modern Blender interface — covers the key changes without hours of beginner content." },
+  basics1hr: { title:"Learn the Blender Basics Tutorial Series",      url:"https://cgcookie.com/courses/learn-the-blender-basics-tutorial-series",                  cats:["Beginner","Fundamentals"], version:"2.x", desc:"In under 1 hour, learn everything you need to start using Blender. The right foundation for any project." },
+
+  // Animation
+  coreAnim:  { title:"CORE | Fundamentals of Animation in Blender",   url:"https://cgcookie.com/courses/core-fundamentals-of-animation-in-blender",                cats:["Animation","CORE"],   desc:"The definitive modern animation fundamentals — editors, principles, and the tools Blender animators rely on." },
+  fundAnim:  { title:"Fundamentals of Animation in Blender",          url:"https://cgcookie.com/courses/fundamentals-of-animation-in-blender",                     cats:["Animation"],          desc:"Start with basic animation skills transferrable to any animation type, from frame rates to the graph editor." },
+  fundAnim0: { title:"Fundamentals of Animation",                     url:"https://cgcookie.com/courses/fundamentals-of-animation",                                 cats:["Animation"],          desc:"The artistic side of animation — how to create the illusion of life and put character into motion." },
+  bootAnim:  { title:"Blender Animation Bootcamp 2023",               url:"https://cgcookie.com/courses/animation-bootcamp",                                        cats:["Animation"],          desc:"The next level after basics — led by pro animator Wayne Dixon, this is the perfect step toward first-class animation." },
+  camera:    { title:"Fundamentals: Directing The Camera in Blender", url:"https://cgcookie.com/courses/directing-the-camera-in-blender",                           cats:["Animation"],          desc:"Camera physics, cinematography concepts, and how to tell a visual story through camera movement." },
+  pokeball:  { title:"CATCH - Creating a Pokéball in Blender",        url:"https://cgcookie.com/courses/catch-creating-a-pokeball-in-blender",                     cats:["Animation","Modeling","Rigging"], desc:"A fun complete project: photorealistic modeling, shading, and animation in one short course." },
+
+  // Modeling
+  coreMesh:  { title:"CORE | Fundamentals of 3D Mesh Modeling",       url:"https://cgcookie.com/courses/core-fundamentals-mesh-modeling",                          cats:["Modeling","CORE"],    desc:"The most current and complete mesh modeling course — essential techniques and tools for any 3D work." },
+  fundMesh:  { title:"Fundamentals of 3D Mesh Modeling in Blender",   url:"https://cgcookie.com/courses/fundamentals-of-3d-mesh-modeling-in-blender",               cats:["Modeling"],           desc:"All essential mesh modeling workflows from primitives to a full lo-poly room. Great for understanding the why, not just the how." },
+  bootMesh:  { title:"Blender Mesh Modeling Bootcamp",                 url:"https://cgcookie.com/courses/blender-mesh-modeling-bootcamp",                            cats:["Modeling"],           desc:"Intensive coverage of mesh editing and selection tools, with a strong focus on clean topology." },
+  modify:    { title:"MODIFY - A Complete Guide on Blender's Modifiers", url:"https://cgcookie.com/courses/course-modify-a-complete-guide-on-blender-s-modifiers-84c3c6a66db79804", cats:["Modeling"], desc:"Every mesh modifier explained — Generate and Deform columns. Master the modifier stack." },
+  rev:       { title:"REV: Model a Low Poly Muscle Car",               url:"https://cgcookie.com/courses/rev-model-a-low-poly-muscle-car",                          cats:["Modeling","Beginner"], desc:"A focused hard surface project: model a low poly car while building solid fundamentals." },
+  introChar: { title:"Introduction to Character Modeling",             url:"https://cgcookie.com/courses/introduction-to-character-modeling",                       cats:["Modeling"],           desc:"A variety of techniques for building a humanoid pilot character — great transition from hard-surface to character work." },
+
+  // Sculpting
+  coreSculpt:{ title:"CORE | Fundamentals of Digital Sculpting",      url:"https://cgcookie.com/courses/core-fundamentals-of-digital-sculpting-blender",            cats:["Modeling","CORE"],    desc:"The current-gen sculpting fundamentals — brushes, tools, and techniques for any 3D artist." },
+  fundSculpt:{ title:"Fundamentals of Digital Sculpting with Blender", url:"https://cgcookie.com/courses/fundamentals-of-digital-sculpting-with-blender",           cats:["Modeling"],           desc:"All essential sculpting tools, features, and techniques to lay the foundation in Sculpt Mode." },
+
+  // Rigging
+  coreRig:   { title:"CORE | Fundamentals of Rigging in Blender",     url:"https://cgcookie.com/courses/core-fundamentals-of-rigging-blender",                     cats:["Rigging","CORE"],     desc:"Modern rigging essentials — bones, armatures, parenting, and bone constraints with step-by-step projects." },
+  fundRig:   { title:"Fundamentals of Rigging — Learn How to Rig in Blender", url:"https://cgcookie.com/courses/learn-how-to-rig-anything-in-blender-fundamentals-of-rigging", cats:["Rigging"], desc:"Comprehensive rigging toolkit: rigs, armatures, space constraints — perfect for those just starting." },
+
+  // Materials
+  coreMat:   { title:"CORE | Fundamentals of Materials and Shading",  url:"https://cgcookie.com/courses/core-fundamentals-of-materials-and-shading-in-blender",    cats:["Materials","CORE"],   desc:"Master shader nodes, explore Eevee NEXT, and achieve stunning realistic 3D renders." },
+  coreTex:   { title:"CORE | Fundamentals of Texturing in Blender",   url:"https://cgcookie.com/courses/core-fundamentals-of-texturing-in-blender",                 cats:["Materials","CORE","Game Art"], desc:"Add lifelike detail to models using shader nodes, UV unwrapping, texture painting, and PBR." },
+  fundMat:   { title:"Fundamentals of Blender Materials and Shading",  url:"https://cgcookie.com/courses/fundamentals-of-blender-materials-and-shading",             cats:["Materials"],          desc:"A deep 40-lesson dive into creating materials and shaders for both stylized and realistic looks." },
+  fundTex:   { title:"Fundamentals of Texturing in Blender",           url:"https://cgcookie.com/courses/fundamentals-of-texturing-in-blender",                     cats:["Materials"],          desc:"CG textures, UV wrapping vs. UV mapping, image textures to procedural texturing — a complete guide." },
+  pressStart:{ title:"PRESS START: Your Simple First Blender Project", url:"https://cgcookie.com/courses/press-start-your-simple-first-blender-project",             cats:["Beginner","Modeling","Materials"], desc:"A guided first project covering modeling, texturing, and lighting from scratch." },
+
+  // Rendering / Lighting
+  coreLight: { title:"CORE | Fundamentals of Lighting in Blender",    url:"https://cgcookie.com/courses/core-fundamentals-of-lighting-in-blender",                  cats:["Rendering","CORE"],   desc:"Comprehensive 3D lighting from scratch — essential principles in Cycles and Eevee." },
+  fundLight: { title:"Fundamentals of Digital Lighting in Blender",   url:"https://cgcookie.com/courses/fundamentals-of-digital-lighting-in-blender",               cats:["Rendering"],          desc:"How Blender lights work, how real light is simulated, and how to make renders look amazing." },
+  fundRender:{ title:"Fundamentals of Rendering in Blender 2.7",      url:"https://cgcookie.com/courses/fundamentals-of-rendering",                                  cats:["Rendering"],          version:"2.7", desc:"Core Cycles concepts for balancing render quality and speed — conceptually still very relevant." },
+
+  // VFX / Simulations
+  corePhysics:{ title:"CORE | Fundamentals of Physics in Blender",    url:"https://cgcookie.com/courses/core-fundamentals-of-physics-in-blender",                   cats:["VFX","CORE"],         desc:"Complete physics coverage: rigid body, cloth, fluid, smoke, fire, particles — with reinforcement projects." },
+  fundDyn:   { title:"Fundamentals of Dynamics",                      url:"https://cgcookie.com/courses/fundamentals-of-dynamics",                                   cats:["VFX"],                desc:"Intro to dynamic simulation: smoke, fire, falling objects, cloth, and pouring liquids." },
+  particles: { title:"PARTICLES: Introduction to Simulation Nodes",   url:"https://cgcookie.com/courses/particles-introduction-to-simulation-nodes",                 cats:["VFX"],                desc:"Simulation Nodes from the ground up — including building a custom physics engine." },
+  coreComp:  { title:"CORE | Fundamentals of Compositing in Blender", url:"https://cgcookie.com/courses/core-fundamentals-of-compositing-in-blender",                cats:["VFX","CORE"],         desc:"Enhance your VFX output in Blender 4.2 with node-based compositing for timing and polish." },
+  fundComp:  { title:"Fundamentals of Compositing",                   url:"https://cgcookie.com/courses/fundamentals-of-compositing",                                cats:["VFX"],                desc:"Separating renders into compositable components for maximum post-production flexibility." },
+
+  // Game Art
+  tread:     { title:"TREAD: Hard Surface Asset Creation for Video Games", url:"https://cgcookie.com/courses/tread-hard-surface-asset-creation-for-video-games", cats:["Game Art","Modeling"], desc:"Full game asset workflow: hard surface modeling, UV unwrapping, and bringing assets into Unreal Engine." },
+
+  // Grease Pencil / 2D
+  draw:      { title:"DRAW! An Introduction to Blender's Grease Pencil", url:"https://cgcookie.com/courses/grease-pencil-basics-an-introduction-to-blender-s-grease-pencil", cats:["Grease Pencil","Beginner"], desc:"FREE course covering materials, textures, and 2D animation basics inside Blender." },
+
+  // Scripting
+  python:    { title:"Introduction to Python Scripting",              url:"https://cgcookie.com/courses/introduction-to-python-scripting",                          cats:["Scripting"],           desc:"Unlock Python scripting in Blender — automate workflows and build custom tools for more creative control." },
+
+  // Snowman (fun project)
+  snowman:   { title:"Crafting a Realistic Snowman Step-by-Step",     url:"https://cgcookie.com/courses/let-s-build-a-snowman-in-blender",                          cats:["Beginner","Modeling","Materials"], desc:"A festive guided project using modeling and materials — great for practicing fundamentals." },
+};
+
+// ─────────────────────────────────────────────
+//  PATH DEFINITIONS
+//  Each path = array of { id, why } objects
+// ─────────────────────────────────────────────
+
+// Helper to prepend basics based on experience level
+function getBasicsStep(level) {
+  if (level === 'beginner') {
+    return [
+      { id:'basics45',  why:"Start here every time. This free course gets you confident in the modern Blender 4.5 interface before anything else." }
+    ];
+  }
+  if (level === 'some') return [];  // skip basics for experienced
+  return [];
+}
+
+const PATHS = {
+
+  // ── ANIMATION ──
+  animation_beginner_fundamentals: {
+    title: "Animation from\nZero to Moving",
+    summary: "You'll start with the Blender interface, then move through the principles of animation before applying them hands-on. This sequence mirrors how a real animator thinks.",
+    steps: [
+      { id:'basics45',  why:"Get comfortable with Blender's workspace — editors, viewports, and timeline — before touching keyframes." },
+      { id:'fundAnim0', why:"These are the artistic principles behind all animation. Understanding *why* things move the way they do changes everything." },
+      { id:'coreAnim',  why:"Now apply those principles inside Blender — this is your technical foundation in Blender's animation system." },
+      { id:'bootAnim',  why:"The bootcamp is the level-up. You'll move from knowing the tools to thinking like an animator." },
+      { id:'camera',    why:"Every animator should understand camera direction. This rounds out your ability to tell stories with motion." },
+    ]
+  },
+  animation_beginner_project: {
+    title: "Your First\nBlender Animation",
+    summary: "Jump into projects fast. You'll get enough Blender basics to function, then immediately apply them to animation work.",
+    steps: [
+      { id:'basics45',  why:"A quick foundation in the Blender interface so you're not fighting the tool." },
+      { id:'fundAnim',  why:"The essential keyframing and timeline skills to start making things move right away." },
+      { id:'pokeball',  why:"A complete project from modeling to animation — this is where theory becomes practice." },
+      { id:'bootAnim',  why:"Graduate to professional animation technique once you've got your first project under your belt." },
+    ]
+  },
+  animation_beginner_broad: {
+    title: "The Full\nAnimation Picture",
+    summary: "A wide path that builds your animation fluency across principles, technique, and storytelling tools.",
+    steps: [
+      { id:'basics45',  why:"Interface first — know your environment." },
+      { id:'fundAnim0', why:"The principles: timing, spacing, anticipation. These are the language of animation." },
+      { id:'coreAnim',  why:"Apply those principles in Blender's modern toolset." },
+      { id:'camera',    why:"Camera direction is animation too. Learn how to frame your shots." },
+      { id:'bootAnim',  why:"The intensive — this is where all the pieces come together." },
+    ]
+  },
+  animation_beginner_fast: {
+    title: "Essential\nAnimation Path",
+    summary: "Only the courses that matter most. No detours.",
+    steps: [
+      { id:'basics45',  why:"You need the interface. This is free and fast." },
+      { id:'coreAnim',  why:"The current-gen definitive animation fundamentals course. This one course covers the most ground." },
+      { id:'bootAnim',  why:"The professional level-up. Bootcamp + CORE is the fastest credible path to real animation skill." },
+    ]
+  },
+  animation_some: {
+    title: "Level Up Your\nAnimation",
+    summary: "Skipping the basics — you know the interface. This path deepens your animation craft and adds storytelling dimension.",
+    steps: [
+      { id:'coreAnim',  why:"Even if you've animated before, the CORE series covers the modern toolset thoroughly." },
+      { id:'fundAnim0', why:"The principles of animation are worth revisiting. This course is entirely about artistic quality." },
+      { id:'bootAnim',  why:"Wayne Dixon's bootcamp is the most intensive animation training in the catalog." },
+      { id:'camera',    why:"Camera as a storytelling tool — often overlooked by animators who focus only on the moving object." },
+    ]
+  },
+
+  // ── MODELING ──
+  modeling_beginner_fundamentals: {
+    title: "3D Modeling\nFrom Scratch",
+    summary: "A structured foundation in mesh modeling — you'll understand how Blender handles geometry before moving to any specific project type.",
+    steps: [
+      { id:'basics45',  why:"Viewport navigation and interface fluency come first." },
+      { id:'coreMesh',  why:"The modern definitive guide to mesh modeling in Blender. Every tool explained with context." },
+      { id:'modify',    why:"Modifiers are how professionals work non-destructively. This is a critical next layer." },
+      { id:'bootMesh',  why:"The bootcamp hammers topology into muscle memory — you'll be able to model anything cleanly." },
+    ]
+  },
+  modeling_beginner_project: {
+    title: "Model Something\nReal",
+    summary: "Get to a finished 3D model fast. Project-based learning all the way.",
+    steps: [
+      { id:'basics45',  why:"Interface essentials — just enough to not get lost." },
+      { id:'pressStart',why:"Your very first complete Blender project: modeling, texturing, and lighting combined." },
+      { id:'rev',       why:"A focused hard-surface project. Build a low poly car while drilling modeling fundamentals." },
+      { id:'coreMesh',  why:"Now that you've shipped a project, the fundamentals course will make everything click deeper." },
+    ]
+  },
+  modeling_beginner_fast: {
+    title: "Essential\nModeling Path",
+    summary: "The shortest path to solid modeling skills.",
+    steps: [
+      { id:'basics45',  why:"Free, fast interface foundation." },
+      { id:'coreMesh',  why:"This single course covers everything you need to model with confidence in modern Blender." },
+      { id:'modify',    why:"Modifiers double your modeling vocabulary in one course." },
+    ]
+  },
+  modeling_some: {
+    title: "Sharpen Your\nModeling",
+    summary: "No basics — straight to the content that will upgrade your existing skills.",
+    steps: [
+      { id:'coreMesh',  why:"Even experienced modelers find gaps. The CORE course is thorough and current." },
+      { id:'modify',    why:"If you haven't done a deep dive on the full modifier stack, this course is eye-opening." },
+      { id:'bootMesh',  why:"The topology-focused bootcamp is the fastest way to build cleaner models." },
+      { id:'introChar', why:"Character modeling requires different thinking than hard surface — great for expanding range." },
+    ]
+  },
+
+  // ── SCULPTING ──
+  sculpting_beginner_fundamentals: {
+    title: "Digital Sculpting\nFundamentals",
+    summary: "Sculpting in Blender rewards patience with fundamentals. This path builds a real foundation before organic work gets complex.",
+    steps: [
+      { id:'basics45',  why:"You need viewport comfort and object mode fluency before entering Sculpt Mode." },
+      { id:'coreMesh',  why:"Understanding mesh structure makes you a better sculptor. A little time here pays off enormously." },
+      { id:'coreSculpt',why:"The CORE sculpting course is the definitive modern resource — brushes, tools, and workflow." },
+      { id:'fundSculpt',why:"A complementary deep-dive into Sculpt Mode tools and techniques for organic forms." },
+    ]
+  },
+  sculpting_beginner_fast: {
+    title: "Direct to\nSculpting",
+    summary: "Minimal setup, maximum sculpting time.",
+    steps: [
+      { id:'basics45',  why:"Just enough interface to not get stuck." },
+      { id:'coreSculpt',why:"Jump straight into the best sculpting course in the catalog." },
+    ]
+  },
+  sculpting_some: {
+    title: "Better\nSculpting",
+    summary: "Upgrade your existing sculpting skills with focused, current-gen training.",
+    steps: [
+      { id:'coreSculpt',why:"Even if you've sculpted before, the CORE series is updated for modern Blender and very thorough." },
+      { id:'coreMesh',  why:"Stronger mesh knowledge gives you better control over your sculpted topology." },
+    ]
+  },
+
+  // ── RIGGING ──
+  rigging_beginner_fundamentals: {
+    title: "Learning to\nRig in Blender",
+    summary: "Rigging is technical, but this path makes it approachable by building the concepts before the tools.",
+    steps: [
+      { id:'basics45',  why:"Interface comfort before anything technical." },
+      { id:'coreMesh',  why:"You rig meshes — understanding mesh structure makes you a much better rigger." },
+      { id:'coreRig',   why:"The current-gen definitive rigging course. Bones, controls, constraints — all covered step by step." },
+      { id:'fundRig',   why:"Complements the CORE course with deeper constraint theory and rig design thinking." },
+    ]
+  },
+  rigging_beginner_fast: {
+    title: "Essential\nRigging Path",
+    summary: "The core skills to rig anything in Blender.",
+    steps: [
+      { id:'basics45',  why:"Interface foundation." },
+      { id:'coreRig',   why:"One comprehensive modern course covers everything you need to rig with confidence." },
+    ]
+  },
+  rigging_some: {
+    title: "Deepen Your\nRigging Skills",
+    summary: "Targeted courses to fill gaps and add rigging sophistication.",
+    steps: [
+      { id:'coreRig',   why:"The CORE course is updated for modern Blender — even experienced riggers find new depth here." },
+      { id:'fundRig',   why:"Constraint theory and rig architecture explored at length." },
+    ]
+  },
+
+  // ── MATERIALS ──
+  materials_beginner_fundamentals: {
+    title: "Materials &\nShading Mastery",
+    summary: "A complete foundation in how Blender manages materials, from shader nodes to UV texturing.",
+    steps: [
+      { id:'basics45',  why:"Interface and viewport basics are the prerequisite for any Blender work." },
+      { id:'coreMat',   why:"Start with the CORE materials course — shader nodes, Eevee NEXT, PBR fundamentals all in one." },
+      { id:'coreTex',   why:"Texturing extends your materials toolkit: UV unwrapping, texture painting, and PBR workflows." },
+      { id:'fundMat',   why:"A 40-lesson deep dive that goes wide across materials for both stylized and realistic renders." },
+    ]
+  },
+  materials_beginner_project: {
+    title: "Materials Through\nProjects",
+    summary: "Learn by making something finished, not just following exercises.",
+    steps: [
+      { id:'basics45',  why:"Quick start with the interface." },
+      { id:'pressStart',why:"Your first project includes modeling, texturing, and lighting — materials in real context." },
+      { id:'coreMat',   why:"Now that you've used materials in context, the fundamentals course will deepen what you observed." },
+      { id:'coreTex',   why:"Add UV and texture painting to your toolkit." },
+    ]
+  },
+  materials_some: {
+    title: "Level Up Your\nMaterials",
+    summary: "Skip the basics — targeted training to go deeper in shading and texturing.",
+    steps: [
+      { id:'coreMat',   why:"Updated for modern Blender — covers shader nodes and Eevee NEXT comprehensively." },
+      { id:'coreTex',   why:"PBR texturing pipeline, UV workflows, and texture painting in one thorough course." },
+      { id:'fundTex',   why:"Procedural texturing and UV mapping theory to round out your texturing knowledge." },
+    ]
+  },
+
+  // ── RENDERING / LIGHTING ──
+  rendering_beginner_fundamentals: {
+    title: "Lighting &\nRendering Foundation",
+    summary: "Lighting is one of the highest-leverage skills in 3D — it makes everything look better. This path builds real understanding.",
+    steps: [
+      { id:'basics45',  why:"Interface basics first." },
+      { id:'coreLight', why:"The current definitive lighting course — covers principles, Cycles, Eevee, and HDRi lighting." },
+      { id:'fundLight', why:"Deep dive into how light is simulated and how to use it artistically." },
+      { id:'coreComp',  why:"Compositing extends your renders — learn to adjust, correct, and enhance after rendering." },
+    ]
+  },
+  rendering_beginner_fast: {
+    title: "Essential\nLighting Path",
+    summary: "The two courses that give you the most lighting fluency fastest.",
+    steps: [
+      { id:'basics45',  why:"Interface foundation." },
+      { id:'coreLight', why:"One course. Everything you need to light a scene well in modern Blender." },
+    ]
+  },
+  rendering_some: {
+    title: "Better Renders,\nNow",
+    summary: "Skip straight to the content that will improve your output.",
+    steps: [
+      { id:'coreLight', why:"Updated for Blender 4.x — even experienced artists find new depth in the CORE lighting course." },
+      { id:'fundLight', why:"The artistic side of lighting — understanding how to see and recreate quality light." },
+      { id:'coreComp',  why:"Post-processing your renders in the compositor gives you control you can't get any other way." },
+    ]
+  },
+
+  // ── VFX / SIMULATIONS ──
+  vfx_beginner_fundamentals: {
+    title: "VFX &\nSimulations",
+    summary: "Simulation in Blender is powerful but has many moving parts. This path builds understanding before complexity.",
+    steps: [
+      { id:'basics45',  why:"Interface fluency is required before simulations make sense." },
+      { id:'corePhysics',why:"The comprehensive physics course — covers every simulation type with projects to reinforce each." },
+      { id:'fundDyn',   why:"A focused look at dynamics: smoke, fire, cloth, and fluid simulation workflows." },
+      { id:'particles', why:"Simulation Nodes are the future of particles in Blender — this is worth learning early." },
+      { id:'coreComp',  why:"VFX almost always needs compositing. Render passes and post-processing make your sims sing." },
+    ]
+  },
+  vfx_beginner_fast: {
+    title: "Fastest Path\nto VFX",
+    summary: "Two courses that give you practical simulation skills quickly.",
+    steps: [
+      { id:'basics45',   why:"Interface basics." },
+      { id:'corePhysics',why:"Everything in one well-structured course — the fastest credible way into Blender simulations." },
+    ]
+  },
+  vfx_some: {
+    title: "Level Up Your\nSimulations",
+    summary: "Deeper and broader simulation training for existing Blender users.",
+    steps: [
+      { id:'corePhysics',why:"The CORE physics course is updated for modern Blender — highly comprehensive even for experienced users." },
+      { id:'particles',  why:"Simulation Nodes are new-ish and increasingly important for non-destructive VFX workflows." },
+      { id:'coreComp',   why:"Compositor skills are the multiplier for VFX work — essential for any serious simulation output." },
+    ]
+  },
+
+  // ── GAME ART ──
+  gameart_beginner_fundamentals: {
+    title: "Blender for\nGame Art",
+    summary: "Building game assets requires a specific pipeline: clean geometry, efficient UVs, PBR materials, and game engine export. This path covers all of it.",
+    steps: [
+      { id:'basics45',  why:"Interface foundation." },
+      { id:'coreMesh',  why:"Clean, efficient mesh modeling is the basis of every good game asset." },
+      { id:'coreTex',   why:"PBR texturing with UV unwrapping is the core workflow for game-ready assets." },
+      { id:'tread',     why:"This course is explicitly designed for the game asset pipeline — hard surface modeling through Unreal Engine export." },
+    ]
+  },
+  gameart_beginner_fast: {
+    title: "Game Assets,\nFast",
+    summary: "The direct path to making game-ready assets in Blender.",
+    steps: [
+      { id:'basics45',  why:"Interface basics." },
+      { id:'tread',     why:"Covers the complete game asset workflow from mesh to Unreal Engine — purpose-built for this." },
+      { id:'coreTex',   why:"PBR texturing is non-negotiable for game art — learn it right after your first project." },
+    ]
+  },
+  gameart_some: {
+    title: "Sharpen Your\nGame Art Skills",
+    summary: "Targeted courses for existing Blender users moving into game asset creation.",
+    steps: [
+      { id:'tread',     why:"The most game-specific course in the catalog. Hard surface + engine pipeline." },
+      { id:'coreTex',   why:"PBR texture workflows updated for modern Blender and game engine standards." },
+      { id:'coreMesh',  why:"Tighter topology means better game assets — reinforce your modeling fundamentals." },
+    ]
+  },
+
+  // ── CHARACTER PIPELINE ──
+  character_beginner_broad: {
+    title: "Full Character\nPipeline",
+    summary: "The most ambitious path — you'll learn everything needed to take a character from concept to animated. This is a multi-course journey.",
+    steps: [
+      { id:'basics45',  why:"Start with the interface — you'll be living in Blender for a while." },
+      { id:'coreMesh',  why:"Mesh modeling fundamentals are the prerequisite for every other skill in this pipeline." },
+      { id:'introChar', why:"Character-specific modeling workflows. This is where generic 3D modeling becomes character work." },
+      { id:'coreSculpt',why:"Add organic detail and refine forms with sculpting tools." },
+      { id:'coreMat',   why:"Characters need materials — skin, fabric, hair. Start your shading skills here." },
+      { id:'coreRig',   why:"Rigging is what gives your character the ability to move. This is a big investment that pays off enormously." },
+      { id:'coreAnim',  why:"The final piece — bring your rigged character to life with Blender's animation system." },
+    ]
+  },
+  character_beginner_fast: {
+    title: "Character Pipeline\nEssentials",
+    summary: "The core courses only — the fastest path through a full character workflow.",
+    steps: [
+      { id:'basics45',  why:"Interface foundation." },
+      { id:'coreMesh',  why:"Mesh modeling is the prerequisite for everything else in this path." },
+      { id:'coreRig',   why:"Rigging is the technical spine of any character pipeline." },
+      { id:'coreAnim',  why:"Animation is the payoff. Three courses from interface to animated character." },
+    ]
+  },
+  character_some: {
+    title: "Strengthen Your\nCharacter Pipeline",
+    summary: "Skip the basics — targeted training for each stage of the character workflow.",
+    steps: [
+      { id:'introChar', why:"Character-specific modeling is a distinct skill set worth focusing on directly." },
+      { id:'coreSculpt',why:"Organic sculpting on top of your modeling skills." },
+      { id:'coreRig',   why:"Updated for modern Blender — even experienced riggers find depth here." },
+      { id:'coreAnim',  why:"The CORE animation course brings everything together for character animation." },
+    ]
+  },
+
+  // ── GREASE PENCIL ──
+  grease_beginner: {
+    title: "2D in Blender\nwith Grease Pencil",
+    summary: "Grease Pencil is Blender's unique 2D/3D hybrid drawing system. This is the right starting point.",
+    steps: [
+      { id:'basics45',  why:"Even for 2D work, you need to understand Blender's interface." },
+      { id:'draw',      why:"The definitive free Grease Pencil introduction — materials, textures, and animation basics." },
+    ]
+  },
+  grease_some: {
+    title: "Deeper into\nGrease Pencil",
+    summary: "For existing Blender users wanting to add 2D tools to their workflow.",
+    steps: [
+      { id:'draw',      why:"Even experienced Blender users benefit from going back to the Grease Pencil fundamentals." },
+    ]
+  },
+
+  // ── SCRIPTING ──
+  scripting_beginner: {
+    title: "Python Scripting\nin Blender",
+    summary: "Scripting unlocks a whole new dimension of Blender. This path gets you ready before you write a line of code.",
+    steps: [
+      { id:'basics45',  why:"You need a strong foundation in Blender's interface before scripting it." },
+      { id:'coreMesh',  why:"Understanding how Blender handles geometry helps you write better scripts." },
+      { id:'python',    why:"The scripting course itself — automating tasks, building custom tools, understanding the Python API." },
+    ]
+  },
+  scripting_some: {
+    title: "Scripting\nBlender",
+    summary: "For existing Blender users ready to extend their workflow with Python.",
+    steps: [
+      { id:'python',    why:"The Python scripting course is the direct path. Previous Blender experience is all you need." },
+    ]
+  },
+
+  // ── COMPOSITING ──
+  compositing_beginner: {
+    title: "Compositing in\nBlender",
+    summary: "Compositing lives at the intersection of rendering and post-production. This path builds that bridge.",
+    steps: [
+      { id:'basics45',  why:"Interface foundation for working with Blender's node editors." },
+      { id:'coreLight', why:"You composite renders — understanding lighting gives compositing context and purpose." },
+      { id:'coreComp',  why:"The current definitive compositing course for Blender 4.2." },
+      { id:'fundComp',  why:"Deep dive into render pass separation and post-production flexibility." },
+    ]
+  },
+  compositing_some: {
+    title: "Better\nCompositing",
+    summary: "Focused compositing training for existing Blender users.",
+    steps: [
+      { id:'coreComp',  why:"Updated for Blender 4.2 with comprehensive coverage of the compositor." },
+      { id:'fundComp',  why:"Render passes, multi-layer workflows, and post-production control." },
+    ]
+  },
+
+  // ── UPGRADER PATHS ──
+  upgrade_from_27: {
+    title: "Welcome Back —\nBlender Changed",
+    summary: "You have solid Blender knowledge. The jump from 2.7 to modern Blender is significant — this path bridges that gap efficiently before getting you into current-gen courses.",
+    steps: [
+      { id:'upgrade27', why:"This free course is specifically designed to translate your 2.7 knowledge to 2.8+ without making you sit through beginner content." },
+      { id:'basics45',  why:"Get up to speed on the 4.5 LTS interface — the most stable modern version for learning." },
+    ],
+    versionNote: "⚠️ Heads up: courses labeled <strong>2.7</strong> or <strong>2.8</strong> in the catalog still contain <em>conceptually valid</em> material — the principles of lighting, rendering, and rigging haven't changed. The main differences are UI location and some node system updates. The CORE series (CORE | Fundamentals of …) represents the most current versions of each topic."
+  },
+  upgrade_from_28: {
+    title: "From 2.8 to\nModern Blender",
+    summary: "Your 2.8 knowledge is still very transferrable. The biggest changes between 2.8 and 4.x are Geometry Nodes, Eevee NEXT, and asset library improvements. A quick orientation will get you current.",
+    steps: [
+      { id:'basics45',  why:"Skim the 4.5 basics to spot what's new in the interface and feature set." },
+    ],
+    versionNote: "💡 Most of your 2.8 skills still apply. Key changes to know: Eevee was overhauled into Eevee NEXT, Geometry Nodes replaced the old particle system, and the asset library was significantly improved. The CORE series is your best shortcut to any topic you want to modernize."
+  },
+  upgrade_from_3x: {
+    title: "From 3.x to\nBlender 4.x",
+    summary: "The 3.x to 4.x transition is the smoothest upgrade in Blender's history. Your skills translate almost directly — a brief orientation is all you need.",
+    steps: [
+      { id:'basics4x',  why:"A quick walkthrough of what changed in Blender 4.x. Most of your 3.x knowledge applies directly." },
+    ],
+    versionNote: "✅ Good news: The 3.x to 4.x upgrade is relatively minor. The main additions are Eevee NEXT, bone collections replacing bone layers, and incremental improvements throughout. You're in great shape."
+  },
+};
+
+// Also-explore suggestions by focus
+const ALSO_EXPLORE = {
+  animation:    [{ id:'camera', icon:'🎬' }, { id:'coreRig', icon:'🦴' }, { id:'fundComp', icon:'🎞' }],
+  modeling:     [{ id:'coreSculpt', icon:'🗿' }, { id:'modify', icon:'🔧' }, { id:'coreMat', icon:'🎨' }],
+  sculpting:    [{ id:'coreMat', icon:'🎨' }, { id:'coreRig', icon:'🦴' }, { id:'introChar', icon:'🧍' }],
+  rigging:      [{ id:'coreAnim', icon:'🎬' }, { id:'introChar', icon:'🧍' }, { id:'fundAnim0', icon:'✨' }],
+  materials:    [{ id:'coreLight', icon:'💡' }, { id:'coreTex', icon:'🖼' }, { id:'fundDyn', icon:'💥' }],
+  rendering:    [{ id:'coreMat', icon:'🎨' }, { id:'fundComp', icon:'🎞' }, { id:'coreComp', icon:'🎥' }],
+  vfx:          [{ id:'coreLight', icon:'💡' }, { id:'coreMat', icon:'🎨' }, { id:'camera', icon:'🎬' }],
+  gameart:      [{ id:'rev', icon:'🚗' }, { id:'coreMesh', icon:'🧊' }, { id:'modify', icon:'🔧' }],
+  character:    [{ id:'coreMat', icon:'🎨' }, { id:'camera', icon:'🎬' }, { id:'fundAnim0', icon:'✨' }],
+  grease:       [{ id:'fundAnim0', icon:'🎬' }, { id:'coreMat', icon:'🎨' }],
+  scripting:    [{ id:'coreMesh', icon:'🧊' }, { id:'modify', icon:'🔧' }],
+  compositing:  [{ id:'coreLight', icon:'💡' }, { id:'fundRender', icon:'⚙️' }],
+};
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+const state = { level: null, focus: null, goal: null, version: null };
+
+// ─────────────────────────────────────────────
+//  UI LOGIC
+// ─────────────────────────────────────────────
+const STEPS = ['s0','s1','s2','s3','s4'];
+let currentStep = 0;
+
+function goTo(n) {
+  // Validate before advancing
+  if (n === 2 && !state.level) return;
+  if (n === 3 && !state.focus) return;
+
+  document.getElementById(STEPS[currentStep]).classList.remove('active');
+  currentStep = n;
+  document.getElementById(STEPS[n]).classList.add('active');
+
+  // Progress bar
+  const pct = [0, 15, 45, 72, 100][n];
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressWrap').classList.toggle('visible', n > 0);
+  document.getElementById('restartBtn').classList.toggle('visible', n > 0);
+
+  // Progress labels
+  ['pl1','pl2','pl3','pl4'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+    if (i + 1 === n) el.classList.add('active');
+    if (i + 1 < n)   el.classList.add('done');
+  });
+
+  // Configure step 3 based on level
+  if (n === 3) configureStep3();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function configureStep3() {
+  const isUpgrader = state.level === 'upgrade';
+  document.getElementById('s3-goals').style.display   = isUpgrader ? 'none' : 'block';
+  document.getElementById('s3-version').style.display = isUpgrader ? 'block' : 'none';
+
+  if (isUpgrader) {
+    document.getElementById('s3q').textContent    = 'Which version are you coming from?';
+    document.getElementById('s3hint').textContent = 'This helps us choose the right bridging course for you.';
+  } else {
+    document.getElementById('s3q').textContent    = 'How do you learn best?';
+    document.getElementById('s3hint').textContent = 'Your path will be ordered and weighted accordingly.';
+  }
+}
+
+function pick(card) {
+  const group = card.dataset.group;
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state[group] = card.dataset.val;
+
+  // Enable next buttons
+  if (group === 'level') enableNext('next1');
+  if (group === 'focus') enableNext('next2');
+  if (group === 'goal')  enableNext('next3');
+}
+
+function pickVersion(pill) {
+  document.querySelectorAll('.vpill').forEach(p => p.classList.remove('selected'));
+  pill.classList.add('selected');
+  state.version = pill.dataset.val;
+  enableNext('next3');
+}
+
+function enableNext(id) {
+  document.getElementById(id).classList.add('enabled');
+}
+
+function skipStep3() {
+  state.goal = state.level === 'upgrade' ? null : 'fundamentals';
+  buildPath();
+}
+
+function restart() {
+  state.level = state.focus = state.goal = state.version = null;
+  document.querySelectorAll('.opt-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.vpill').forEach(p => p.classList.remove('selected'));
+  ['next1','next2','next3'].forEach(id => document.getElementById(id).classList.remove('enabled'));
+  goTo(0);
+}
+
+document.getElementById('restartBtn').addEventListener('click', restart);
+
+// ─────────────────────────────────────────────
+//  PATH BUILDER
+// ─────────────────────────────────────────────
+function buildPath() {
+  const { level, focus, goal, version } = state;
+  let pathKey;
+
+  if (level === 'upgrade') {
+    if (version === '2.7')      pathKey = 'upgrade_from_27';
+    else if (version === '2.8') pathKey = 'upgrade_from_28';
+    else if (version === '3x')  pathKey = 'upgrade_from_3x';
+    else                        pathKey = 'upgrade_from_28'; // default
+  } else {
+    // Build key from parts
+    const lvl  = level === 'beginner' ? 'beginner' : 'some';
+    const g    = goal || 'fundamentals';
+    const key1 = `${focus}_${lvl}_${g}`;
+    const key2 = `${focus}_${lvl}`;
+    const key3 = `${focus}_some`;
+    pathKey = PATHS[key1] ? key1 : PATHS[key2] ? key2 : PATHS[key3] ? key3 : null;
+  }
+
+  const path = PATHS[pathKey];
+  if (!path) { alert('Could not generate path — please try different selections.'); return; }
+
+  // Build UI
+  const titleParts = path.title.split('\n');
+  document.getElementById('pathTitle').innerHTML = `${titleParts[0]}<br><span class="accent">${titleParts[1] || ''}</span>`;
+  document.getElementById('pathSummary').textContent = path.summary;
+
+  const alert = document.getElementById('versionAlert');
+  if (path.versionNote) {
+    alert.innerHTML = path.versionNote;
+    alert.classList.add('show');
+  } else {
+    alert.classList.remove('show');
+  }
+
+  // Steps
+  const stepsEl = document.getElementById('pathCourses');
+  stepsEl.innerHTML = path.steps.map((step, i) => {
+    const course = COURSES[step.id];
+    if (!course) return '';
+    const catHtml = course.cats.map(c => `<span class="cat-tag ${c === 'CORE' ? 'highlight' : ''}">${c}</span>`).join('');
+    const verHtml = course.version ? `<span class="version-tag">${course.version}</span>` : '';
+    return `
+      <div class="path-step" style="animation-delay:${i * 80}ms">
+        <div class="step-spine">
+          <div class="step-dot">${i + 1}</div>
+          <div class="step-line"></div>
+        </div>
+        <div>
+          <a class="course-card" href="${course.url}" target="_blank" rel="noopener">
+            <div class="course-meta">${catHtml}${verHtml}</div>
+            <div class="course-title">${course.title}</div>
+            <div class="course-desc">${course.desc}</div>
+            <div class="course-why">→ ${step.why}</div>
+            <span class="course-link-hint">↗</span>
+          </a>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Also explore
+  const alsoArr = ALSO_EXPLORE[focus] || [];
+  if (alsoArr.length) {
+    const alsoEl = document.getElementById('alsoGrid');
+    alsoEl.innerHTML = alsoArr.map(item => {
+      const c = COURSES[item.id];
+      if (!c) return '';
+      return `
+        <a class="also-card" href="${c.url}" target="_blank" rel="noopener">
+          <span class="also-icon">${item.icon}</span>
+          <div class="also-text">
+            <div class="also-name">${c.title}</div>
+            <div class="also-cats">${c.cats.join(' · ')}</div>
+          </div>
+        </a>`;
+    }).join('');
+    document.getElementById('secondarySection').style.display = 'block';
+  } else {
+    document.getElementById('secondarySection').style.display = 'none';
+  }
+
+  goTo(4);
+}
+</script>
+</body>
+</html>
