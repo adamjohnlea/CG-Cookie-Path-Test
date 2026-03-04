@@ -20,7 +20,7 @@ fetch('data.json')
 // ─────────────────────────────────────────────
 //  STATE
 // ─────────────────────────────────────────────
-const state = { level: null, focus: null, goal: null, version: null };
+const state = { level: null, focus: null, goal: null };
 let currentPath = null;
 
 // ─────────────────────────────────────────────
@@ -52,24 +52,7 @@ function goTo(n) {
     if (i + 1 < n)   el.classList.add('done');
   });
 
-  // Configure step 3 based on level
-  if (n === 3) configureStep3();
-
   window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function configureStep3() {
-  const isUpgrader = state.level === 'upgrade';
-  document.getElementById('s3-goals').style.display   = isUpgrader ? 'none' : 'block';
-  document.getElementById('s3-version').style.display = isUpgrader ? 'block' : 'none';
-
-  if (isUpgrader) {
-    document.getElementById('s3q').textContent    = 'Which version are you coming from?';
-    document.getElementById('s3hint').textContent = 'This helps us choose the right bridging course for you.';
-  } else {
-    document.getElementById('s3q').textContent    = 'How do you learn best?';
-    document.getElementById('s3hint').textContent = 'Your path will be ordered and weighted accordingly.';
-  }
 }
 
 function pick(card) {
@@ -84,26 +67,18 @@ function pick(card) {
   if (group === 'goal')  enableNext('next3');
 }
 
-function pickVersion(pill) {
-  document.querySelectorAll('.vpill').forEach(p => p.classList.remove('selected'));
-  pill.classList.add('selected');
-  state.version = pill.dataset.val;
-  enableNext('next3');
-}
-
 function enableNext(id) {
   document.getElementById(id).classList.add('enabled');
 }
 
 function skipStep3() {
-  state.goal = state.level === 'upgrade' ? null : 'fundamentals';
+  state.goal = 'fundamentals';
   buildPath();
 }
 
 function restart() {
-  state.level = state.focus = state.goal = state.version = null;
+  state.level = state.focus = state.goal = null;
   document.querySelectorAll('.opt-card').forEach(c => c.classList.remove('selected'));
-  document.querySelectorAll('.vpill').forEach(p => p.classList.remove('selected'));
   ['next1','next2','next3'].forEach(id => document.getElementById(id).classList.remove('enabled'));
   goTo(0);
 }
@@ -114,23 +89,15 @@ document.getElementById('restartBtn').addEventListener('click', restart);
 //  PATH BUILDER
 // ─────────────────────────────────────────────
 function buildPath() {
-  const { level, focus, goal, version } = state;
+  const { level, focus, goal } = state;
   let pathKey;
 
-  if (level === 'upgrade') {
-    if (version === '2.7')      pathKey = 'upgrade_from_27';
-    else if (version === '2.8') pathKey = 'upgrade_from_28';
-    else if (version === '3x')  pathKey = 'upgrade_from_3x';
-    else                        pathKey = 'upgrade_from_28'; // default
-  } else {
-    // Build key from parts
-    const lvl  = level === 'beginner' ? 'beginner' : 'some';
-    const g    = goal || 'fundamentals';
-    const key1 = `${focus}_${lvl}_${g}`;
-    const key2 = `${focus}_${lvl}`;
-    const key3 = `${focus}_some`;
-    pathKey = PATHS[key1] ? key1 : PATHS[key2] ? key2 : PATHS[key3] ? key3 : null;
-  }
+  const lvl  = level === 'beginner' ? 'beginner' : 'some';
+  const g    = goal || 'fundamentals';
+  const key1 = `${focus}_${lvl}_${g}`;
+  const key2 = `${focus}_${lvl}`;
+  const key3 = `${focus}_some`;
+  pathKey = PATHS[key1] ? key1 : PATHS[key2] ? key2 : PATHS[key3] ? key3 : null;
 
   const path = PATHS[pathKey];
   if (!path) { alert('Could not generate path — please try different selections.'); return; }
@@ -140,14 +107,6 @@ function buildPath() {
   const titleParts = path.title.split('\n');
   document.getElementById('pathTitle').innerHTML = `${titleParts[0]}<br><span class="accent">${titleParts[1] || ''}</span>`;
   document.getElementById('pathSummary').textContent = path.summary;
-
-  const alert = document.getElementById('versionAlert');
-  if (path.versionNote) {
-    alert.innerHTML = path.versionNote;
-    alert.classList.add('show');
-  } else {
-    alert.classList.remove('show');
-  }
 
   // Steps
   const stepsEl = document.getElementById('pathCourses');

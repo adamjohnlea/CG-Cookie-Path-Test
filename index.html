@@ -57,12 +57,6 @@
         <div class="opt-desc">I know my way around the interface but want to go deeper in specific areas.</div>
         <div class="opt-check">✓</div>
       </div>
-      <div class="opt-card" data-group="level" data-val="upgrade" onclick="pick(this)">
-        <span class="opt-icon">🔄</span>
-        <div class="opt-title">Upgrading from an Older Version</div>
-        <div class="opt-desc">I know Blender 2.7, 2.8, or 3.x and need to get up to speed with modern Blender.</div>
-        <div class="opt-check">✓</div>
-      </div>
     </div>
 
     <div class="step-nav">
@@ -197,16 +191,6 @@
       </div>
     </div>
 
-    <!-- For upgraders: version selection -->
-    <div id="s3-version" style="display:none">
-      <div class="version-pills" id="versionPills">
-        <div class="vpill" data-val="2.7" onclick="pickVersion(this)">Blender 2.7x</div>
-        <div class="vpill" data-val="2.8" onclick="pickVersion(this)">Blender 2.8x</div>
-        <div class="vpill" data-val="3x"  onclick="pickVersion(this)">Blender 3.x</div>
-        <div class="vpill" data-val="none" onclick="pickVersion(this)">Not sure</div>
-      </div>
-    </div>
-
     <div class="step-nav">
       <button class="btn-back" onclick="goTo(2)">← Back</button>
       <button class="btn-next" id="next3" onclick="buildPath()">Build My Path →</button>
@@ -220,7 +204,6 @@
       <div class="path-badge" id="pathBadge">Learning Path Ready</div>
       <div class="path-title" id="pathTitle">Your Path</div>
       <div class="path-summary" id="pathSummary"></div>
-      <div class="version-alert" id="versionAlert"></div>
     </div>
 
     <div class="path-courses" id="pathCourses"></div>
