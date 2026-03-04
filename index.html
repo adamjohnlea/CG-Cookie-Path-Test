@@ -155,37 +155,28 @@
   <div class="screen" id="s3">
     <div class="step-header">
       <div class="step-number">Step 3 of 3</div>
-      <div class="step-q" id="s3q">Almost there…</div>
-      <div class="step-hint" id="s3hint"></div>
+      <div class="step-q">How do you learn best?</div>
+      <div class="step-hint">Pick whichever feels most like you — there's no wrong answer.</div>
     </div>
 
-    <!-- For beginners/some experience: secondary goal -->
-    <div id="s3-goals">
-      <div class="options-grid cols-2">
-        <div class="opt-card" data-group="goal" data-val="fundamentals" onclick="pick(this)">
-          <span class="opt-icon">📚</span>
-          <div class="opt-title">I want solid fundamentals</div>
-          <div class="opt-desc">Prioritize the building blocks before jumping into projects</div>
-          <div class="opt-check">✓</div>
-        </div>
-        <div class="opt-card" data-group="goal" data-val="project" onclick="pick(this)">
-          <span class="opt-icon">🚀</span>
-          <div class="opt-title">I learn best by doing projects</div>
-          <div class="opt-desc">Get me making something real as fast as possible</div>
-          <div class="opt-check">✓</div>
-        </div>
-        <div class="opt-card" data-group="goal" data-val="broad" onclick="pick(this)">
-          <span class="opt-icon">🗺️</span>
-          <div class="opt-title">I want broad coverage</div>
-          <div class="opt-desc">Show me how all the pieces fit together</div>
-          <div class="opt-check">✓</div>
-        </div>
-        <div class="opt-card" data-group="goal" data-val="fast" onclick="pick(this)">
-          <span class="opt-icon">⏱️</span>
-          <div class="opt-title">I want the fastest path</div>
-          <div class="opt-desc">Give me the most essential courses only, no detours</div>
-          <div class="opt-check">✓</div>
-        </div>
+    <div class="options-grid cols-1" style="max-width:580px">
+      <div class="opt-card" data-group="goal" data-val="fundamentals" onclick="pick(this)">
+        <span class="opt-cat">Foundation</span>
+        <div class="opt-title">Build a solid foundation</div>
+        <div class="opt-desc">Prioritize the building blocks before jumping into projects</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="goal" data-val="project" onclick="pick(this)">
+        <span class="opt-cat">Project-Based</span>
+        <div class="opt-title">I learn best by doing</div>
+        <div class="opt-desc">Get me making something real as fast as possible</div>
+        <div class="opt-check">✓</div>
+      </div>
+      <div class="opt-card" data-group="goal" data-val="fast" onclick="pick(this)">
+        <span class="opt-cat">Fast Track</span>
+        <div class="opt-title">Just the essentials</div>
+        <div class="opt-desc">The most important courses only, no detours</div>
+        <div class="opt-check">✓</div>
       </div>
     </div>
 
