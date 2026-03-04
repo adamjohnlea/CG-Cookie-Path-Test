@@ -255,6 +255,22 @@
     z-index: 1;
   }
 
+  .opt-cat {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
   .opt-title {
     font-size: 15px;
     font-weight: 500;
