@@ -1,40 +1,26 @@
 {
   "courses": {
     "basics45":   { "title": "BLENDER BASICS: Intro to Blender 3D 4.5 LTS", "url": "https://cgcookie.com/courses/blender-basics-an-introduction-to-blender-3d-4-5-lts", "cats": ["Beginner","Fundamentals"], "version": "4.5", "desc": "The definitive starting point — everything you need to navigate Blender 4.5 LTS from absolute zero." },
-    "basics4x":   { "title": "BLENDER BASICS: Intro to Blender 3D 4.X",     "url": "https://cgcookie.com/courses/blender-basics-an-introduction-to-blender-4-x",         "cats": ["Beginner","Fundamentals"], "version": "4.x", "desc": "Get started with the modern Blender 4 interface, viewport navigation, and core workflows." },
-    "basics3x":   { "title": "BLENDER BASICS: Intro to Blender 3.x",         "url": "https://cgcookie.com/courses/blender-3-basics-intro-to-blender",                        "cats": ["Beginner","Fundamentals"], "version": "3.x", "desc": "Master the essentials of Blender 3.x from navigating the viewport to working with Blend files." },
-    "basics28":   { "title": "Learn Blender 2.8 and beyond",                  "url": "https://cgcookie.com/courses/learn-blender-2-8-and-beyond-the-basics-tutorial",         "cats": ["Beginner","Fundamentals"], "version": "2.8", "desc": "Everything you need to start making 3D models in Blender 2.8." },
     "upgrade27":  { "title": "Moving from Blender 2.7 to 2.8",                "url": "https://cgcookie.com/courses/moving-from-blender-2-7-to-2-8",                           "cats": ["Fundamentals"],           "version": "2.8", "desc": "Fast-track your 2.7 knowledge into the modern Blender interface — covers the key changes without hours of beginner content." },
-    "basics1hr":  { "title": "Learn the Blender Basics Tutorial Series",       "url": "https://cgcookie.com/courses/learn-the-blender-basics-tutorial-series",                  "cats": ["Beginner","Fundamentals"], "version": "2.x", "desc": "In under 1 hour, learn everything you need to start using Blender. The right foundation for any project." },
     "coreAnim":   { "title": "CORE | Fundamentals of Animation in Blender",    "url": "https://cgcookie.com/courses/core-fundamentals-of-animation-in-blender",                "cats": ["Animation","CORE"],        "desc": "The definitive modern animation fundamentals — editors, principles, and the tools Blender animators rely on." },
-    "fundAnim":   { "title": "Fundamentals of Animation in Blender",           "url": "https://cgcookie.com/courses/fundamentals-of-animation-in-blender",                     "cats": ["Animation"],               "desc": "Start with basic animation skills transferrable to any animation type, from frame rates to the graph editor." },
-    "fundAnim0":  { "title": "Fundamentals of Animation",                      "url": "https://cgcookie.com/courses/fundamentals-of-animation",                                 "cats": ["Animation"],               "desc": "The artistic side of animation — how to create the illusion of life and put character into motion." },
     "bootAnim":   { "title": "Blender Animation Bootcamp 2023",                "url": "https://cgcookie.com/courses/animation-bootcamp",                                        "cats": ["Animation"],               "desc": "The next level after basics — led by pro animator Wayne Dixon, this is the perfect step toward first-class animation." },
     "camera":     { "title": "Fundamentals: Directing The Camera in Blender",  "url": "https://cgcookie.com/courses/directing-the-camera-in-blender",                           "cats": ["Animation"],               "desc": "Camera physics, cinematography concepts, and how to tell a visual story through camera movement." },
     "pokeball":   { "title": "CATCH - Creating a Pokéball in Blender",         "url": "https://cgcookie.com/courses/catch-creating-a-pokeball-in-blender",                     "cats": ["Animation","Modeling","Rigging"], "desc": "A fun complete project: photorealistic modeling, shading, and animation in one short course." },
     "coreMesh":   { "title": "CORE | Fundamentals of 3D Mesh Modeling",        "url": "https://cgcookie.com/courses/core-fundamentals-mesh-modeling",                          "cats": ["Modeling","CORE"],         "desc": "The most current and complete mesh modeling course — essential techniques and tools for any 3D work." },
-    "fundMesh":   { "title": "Fundamentals of 3D Mesh Modeling in Blender",    "url": "https://cgcookie.com/courses/fundamentals-of-3d-mesh-modeling-in-blender",               "cats": ["Modeling"],                "desc": "All essential mesh modeling workflows from primitives to a full lo-poly room. Great for understanding the why, not just the how." },
     "bootMesh":   { "title": "Blender Mesh Modeling Bootcamp",                 "url": "https://cgcookie.com/courses/blender-mesh-modeling-bootcamp",                            "cats": ["Modeling"],                "desc": "Intensive coverage of mesh editing and selection tools, with a strong focus on clean topology." },
     "modify":     { "title": "MODIFY - A Complete Guide on Blender's Modifiers", "url": "https://cgcookie.com/courses/course-modify-a-complete-guide-on-blender-s-modifiers-84c3c6a66db79804", "cats": ["Modeling"], "desc": "Every mesh modifier explained — Generate and Deform columns. Master the modifier stack." },
     "rev":        { "title": "REV: Model a Low Poly Muscle Car",               "url": "https://cgcookie.com/courses/rev-model-a-low-poly-muscle-car",                          "cats": ["Modeling","Beginner"],     "desc": "A focused hard surface project: model a low poly car while building solid fundamentals." },
     "introChar":  { "title": "Introduction to Character Modeling",             "url": "https://cgcookie.com/courses/introduction-to-character-modeling",                       "cats": ["Modeling"],                "desc": "A variety of techniques for building a humanoid pilot character — great transition from hard-surface to character work." },
     "coreSculpt": { "title": "CORE | Fundamentals of Digital Sculpting",       "url": "https://cgcookie.com/courses/core-fundamentals-of-digital-sculpting-blender",            "cats": ["Modeling","CORE"],         "desc": "The current-gen sculpting fundamentals — brushes, tools, and techniques for any 3D artist." },
-    "fundSculpt": { "title": "Fundamentals of Digital Sculpting with Blender", "url": "https://cgcookie.com/courses/fundamentals-of-digital-sculpting-with-blender",           "cats": ["Modeling"],                "desc": "All essential sculpting tools, features, and techniques to lay the foundation in Sculpt Mode." },
     "coreRig":    { "title": "CORE | Fundamentals of Rigging in Blender",      "url": "https://cgcookie.com/courses/core-fundamentals-of-rigging-blender",                     "cats": ["Rigging","CORE"],          "desc": "Modern rigging essentials — bones, armatures, parenting, and bone constraints with step-by-step projects." },
-    "fundRig":    { "title": "Fundamentals of Rigging — Learn How to Rig in Blender", "url": "https://cgcookie.com/courses/learn-how-to-rig-anything-in-blender-fundamentals-of-rigging", "cats": ["Rigging"], "desc": "Comprehensive rigging toolkit: rigs, armatures, space constraints — perfect for those just starting." },
     "coreMat":    { "title": "CORE | Fundamentals of Materials and Shading",   "url": "https://cgcookie.com/courses/core-fundamentals-of-materials-and-shading-in-blender",    "cats": ["Materials","CORE"],        "desc": "Master shader nodes, explore Eevee NEXT, and achieve stunning realistic 3D renders." },
     "coreTex":    { "title": "CORE | Fundamentals of Texturing in Blender",    "url": "https://cgcookie.com/courses/core-fundamentals-of-texturing-in-blender",                 "cats": ["Materials","CORE","Game Art"], "desc": "Add lifelike detail to models using shader nodes, UV unwrapping, texture painting, and PBR." },
-    "fundMat":    { "title": "Fundamentals of Blender Materials and Shading",  "url": "https://cgcookie.com/courses/fundamentals-of-blender-materials-and-shading",             "cats": ["Materials"],               "desc": "A deep 40-lesson dive into creating materials and shaders for both stylized and realistic looks." },
-    "fundTex":    { "title": "Fundamentals of Texturing in Blender",           "url": "https://cgcookie.com/courses/fundamentals-of-texturing-in-blender",                     "cats": ["Materials"],               "desc": "CG textures, UV wrapping vs. UV mapping, image textures to procedural texturing — a complete guide." },
     "pressStart": { "title": "PRESS START: Your Simple First Blender Project", "url": "https://cgcookie.com/courses/press-start-your-simple-first-blender-project",             "cats": ["Beginner","Modeling","Materials"], "desc": "A guided first project covering modeling, texturing, and lighting from scratch." },
     "coreLight":  { "title": "CORE | Fundamentals of Lighting in Blender",     "url": "https://cgcookie.com/courses/core-fundamentals-of-lighting-in-blender",                  "cats": ["Rendering","CORE"],        "desc": "Comprehensive 3D lighting from scratch — essential principles in Cycles and Eevee." },
-    "fundLight":  { "title": "Fundamentals of Digital Lighting in Blender",    "url": "https://cgcookie.com/courses/fundamentals-of-digital-lighting-in-blender",               "cats": ["Rendering"],               "desc": "How Blender lights work, how real light is simulated, and how to make renders look amazing." },
-    "fundRender": { "title": "Fundamentals of Rendering in Blender 2.7",       "url": "https://cgcookie.com/courses/fundamentals-of-rendering",                                  "cats": ["Rendering"],               "version": "2.7", "desc": "Core Cycles concepts for balancing render quality and speed — conceptually still very relevant." },
     "corePhysics":{ "title": "CORE | Fundamentals of Physics in Blender",      "url": "https://cgcookie.com/courses/core-fundamentals-of-physics-in-blender",                   "cats": ["VFX","CORE"],              "desc": "Complete physics coverage: rigid body, cloth, fluid, smoke, fire, particles — with reinforcement projects." },
     "fundDyn":    { "title": "Fundamentals of Dynamics",                       "url": "https://cgcookie.com/courses/fundamentals-of-dynamics",                                   "cats": ["VFX"],                     "desc": "Intro to dynamic simulation: smoke, fire, falling objects, cloth, and pouring liquids." },
     "particles":  { "title": "PARTICLES: Introduction to Simulation Nodes",    "url": "https://cgcookie.com/courses/particles-introduction-to-simulation-nodes",                 "cats": ["VFX"],                     "desc": "Simulation Nodes from the ground up — including building a custom physics engine." },
     "coreComp":   { "title": "CORE | Fundamentals of Compositing in Blender",  "url": "https://cgcookie.com/courses/core-fundamentals-of-compositing-in-blender",                "cats": ["VFX","CORE"],              "desc": "Enhance your VFX output in Blender 4.2 with node-based compositing for timing and polish." },
-    "fundComp":   { "title": "Fundamentals of Compositing",                    "url": "https://cgcookie.com/courses/fundamentals-of-compositing",                                "cats": ["VFX"],                     "desc": "Separating renders into compositable components for maximum post-production flexibility." },
     "tread":      { "title": "TREAD: Hard Surface Asset Creation for Video Games", "url": "https://cgcookie.com/courses/tread-hard-surface-asset-creation-for-video-games",   "cats": ["Game Art","Modeling"],     "desc": "Full game asset workflow: hard surface modeling, UV unwrapping, and bringing assets into Unreal Engine." },
     "draw":       { "title": "DRAW! An Introduction to Blender's Grease Pencil", "url": "https://cgcookie.com/courses/grease-pencil-basics-an-introduction-to-blender-s-grease-pencil", "cats": ["Grease Pencil","Beginner"], "desc": "FREE course covering materials, textures, and 2D animation basics inside Blender." },
     "python":     { "title": "Introduction to Python Scripting",               "url": "https://cgcookie.com/courses/introduction-to-python-scripting",                          "cats": ["Scripting"],               "desc": "Unlock Python scripting in Blender — automate workflows and build custom tools for more creative control." },
@@ -47,8 +33,7 @@
       "summary": "You'll start with the Blender interface, then move through the principles of animation before applying them hands-on. This sequence mirrors how a real animator thinks.",
       "steps": [
         { "id": "basics45",  "why": "Get comfortable with Blender's workspace — editors, viewports, and timeline — before touching keyframes." },
-        { "id": "fundAnim0", "why": "These are the artistic principles behind all animation. Understanding *why* things move the way they do changes everything." },
-        { "id": "coreAnim",  "why": "Now apply those principles inside Blender — this is your technical foundation in Blender's animation system." },
+        { "id": "coreAnim",  "why": "The definitive modern animation fundamentals — covers principles, editors, and the full Blender animation toolset." },
         { "id": "bootAnim",  "why": "The bootcamp is the level-up. You'll move from knowing the tools to thinking like an animator." },
         { "id": "camera",    "why": "Every animator should understand camera direction. This rounds out your ability to tell stories with motion." }
       ]
@@ -58,7 +43,6 @@
       "summary": "Jump into projects fast. You'll get enough Blender basics to function, then immediately apply them to animation work.",
       "steps": [
         { "id": "basics45",  "why": "A quick foundation in the Blender interface so you're not fighting the tool." },
-        { "id": "fundAnim",  "why": "The essential keyframing and timeline skills to start making things move right away." },
         { "id": "pokeball",  "why": "A complete project from modeling to animation — this is where theory becomes practice." },
         { "id": "bootAnim",  "why": "Graduate to professional animation technique once you've got your first project under your belt." }
       ]
@@ -68,8 +52,7 @@
       "summary": "A wide path that builds your animation fluency across principles, technique, and storytelling tools.",
       "steps": [
         { "id": "basics45",  "why": "Interface first — know your environment." },
-        { "id": "fundAnim0", "why": "The principles: timing, spacing, anticipation. These are the language of animation." },
-        { "id": "coreAnim",  "why": "Apply those principles in Blender's modern toolset." },
+        { "id": "coreAnim",  "why": "The definitive modern animation fundamentals — principles, editors, and toolset all in one course." },
         { "id": "camera",    "why": "Camera direction is animation too. Learn how to frame your shots." },
         { "id": "bootAnim",  "why": "The intensive — this is where all the pieces come together." }
       ]
@@ -88,7 +71,6 @@
       "summary": "Skipping the basics — you know the interface. This path deepens your animation craft and adds storytelling dimension.",
       "steps": [
         { "id": "coreAnim",  "why": "Even if you've animated before, the CORE series covers the modern toolset thoroughly." },
-        { "id": "fundAnim0", "why": "The principles of animation are worth revisiting. This course is entirely about artistic quality." },
         { "id": "bootAnim",  "why": "Wayne Dixon's bootcamp is the most intensive animation training in the catalog." },
         { "id": "camera",    "why": "Camera as a storytelling tool — often overlooked by animators who focus only on the moving object." }
       ]
@@ -140,8 +122,7 @@
       "steps": [
         { "id": "basics45",   "why": "You need viewport comfort and object mode fluency before entering Sculpt Mode." },
         { "id": "coreMesh",   "why": "Understanding mesh structure makes you a better sculptor. A little time here pays off enormously." },
-        { "id": "coreSculpt", "why": "The CORE sculpting course is the definitive modern resource — brushes, tools, and workflow." },
-        { "id": "fundSculpt", "why": "A complementary deep-dive into Sculpt Mode tools and techniques for organic forms." }
+        { "id": "coreSculpt", "why": "The CORE sculpting course is the definitive modern resource — brushes, tools, and workflow." }
       ]
     },
     "sculpting_beginner_fast": {
@@ -167,8 +148,7 @@
       "steps": [
         { "id": "basics45",  "why": "Interface comfort before anything technical." },
         { "id": "coreMesh",  "why": "You rig meshes — understanding mesh structure makes you a much better rigger." },
-        { "id": "coreRig",   "why": "The current-gen definitive rigging course. Bones, controls, constraints — all covered step by step." },
-        { "id": "fundRig",   "why": "Complements the CORE course with deeper constraint theory and rig design thinking." }
+        { "id": "coreRig",   "why": "The current-gen definitive rigging course. Bones, controls, constraints — all covered step by step." }
       ]
     },
     "rigging_beginner_fast": {
@@ -183,8 +163,7 @@
       "title": "Deepen Your\nRigging Skills",
       "summary": "Targeted courses to fill gaps and add rigging sophistication.",
       "steps": [
-        { "id": "coreRig",  "why": "The CORE course is updated for modern Blender — even experienced riggers find new depth here." },
-        { "id": "fundRig",  "why": "Constraint theory and rig architecture explored at length." }
+        { "id": "coreRig",  "why": "The CORE course is updated for modern Blender — even experienced riggers find new depth here." }
       ]
     },
 
@@ -194,8 +173,7 @@
       "steps": [
         { "id": "basics45",  "why": "Interface and viewport basics are the prerequisite for any Blender work." },
         { "id": "coreMat",   "why": "Start with the CORE materials course — shader nodes, Eevee NEXT, PBR fundamentals all in one." },
-        { "id": "coreTex",   "why": "Texturing extends your materials toolkit: UV unwrapping, texture painting, and PBR workflows." },
-        { "id": "fundMat",   "why": "A 40-lesson deep dive that goes wide across materials for both stylized and realistic renders." }
+        { "id": "coreTex",   "why": "Texturing extends your materials toolkit: UV unwrapping, texture painting, and PBR workflows." }
       ]
     },
     "materials_beginner_project": {
@@ -213,8 +191,7 @@
       "summary": "Skip the basics — targeted training to go deeper in shading and texturing.",
       "steps": [
         { "id": "coreMat",  "why": "Updated for modern Blender — covers shader nodes and Eevee NEXT comprehensively." },
-        { "id": "coreTex",  "why": "PBR texturing pipeline, UV workflows, and texture painting in one thorough course." },
-        { "id": "fundTex",  "why": "Procedural texturing and UV mapping theory to round out your texturing knowledge." }
+        { "id": "coreTex",  "why": "PBR texturing pipeline, UV workflows, and texture painting in one thorough course." }
       ]
     },
 
@@ -224,7 +201,6 @@
       "steps": [
         { "id": "basics45",  "why": "Interface basics first." },
         { "id": "coreLight", "why": "The current definitive lighting course — covers principles, Cycles, Eevee, and HDRi lighting." },
-        { "id": "fundLight", "why": "Deep dive into how light is simulated and how to use it artistically." },
         { "id": "coreComp",  "why": "Compositing extends your renders — learn to adjust, correct, and enhance after rendering." }
       ]
     },
@@ -241,7 +217,6 @@
       "summary": "Skip straight to the content that will improve your output.",
       "steps": [
         { "id": "coreLight", "why": "Updated for Blender 4.x — even experienced artists find new depth in the CORE lighting course." },
-        { "id": "fundLight", "why": "The artistic side of lighting — understanding how to see and recreate quality light." },
         { "id": "coreComp",  "why": "Post-processing your renders in the compositor gives you control you can't get any other way." }
       ]
     },
@@ -377,58 +352,30 @@
       "steps": [
         { "id": "basics45",  "why": "Interface foundation for working with Blender's node editors." },
         { "id": "coreLight", "why": "You composite renders — understanding lighting gives compositing context and purpose." },
-        { "id": "coreComp",  "why": "The current definitive compositing course for Blender 4.2." },
-        { "id": "fundComp",  "why": "Deep dive into render pass separation and post-production flexibility." }
+        { "id": "coreComp",  "why": "The current definitive compositing course for Blender 4.2." }
       ]
     },
     "compositing_some": {
       "title": "Better\nCompositing",
       "summary": "Focused compositing training for existing Blender users.",
       "steps": [
-        { "id": "coreComp", "why": "Updated for Blender 4.2 with comprehensive coverage of the compositor." },
-        { "id": "fundComp", "why": "Render passes, multi-layer workflows, and post-production control." }
+        { "id": "coreComp", "why": "Updated for Blender 4.2 with comprehensive coverage of the compositor." }
       ]
-    },
-
-    "upgrade_from_27": {
-      "title": "Welcome Back —\nBlender Changed",
-      "summary": "You have solid Blender knowledge. The jump from 2.7 to modern Blender is significant — this path bridges that gap efficiently before getting you into current-gen courses.",
-      "steps": [
-        { "id": "upgrade27", "why": "This free course is specifically designed to translate your 2.7 knowledge to 2.8+ without making you sit through beginner content." },
-        { "id": "basics45",  "why": "Get up to speed on the 4.5 LTS interface — the most stable modern version for learning." }
-      ],
-      "versionNote": "⚠️ Heads up: courses labeled <strong>2.7</strong> or <strong>2.8</strong> in the catalog still contain <em>conceptually valid</em> material — the principles of lighting, rendering, and rigging haven't changed. The main differences are UI location and some node system updates. The CORE series (CORE | Fundamentals of …) represents the most current versions of each topic."
-    },
-    "upgrade_from_28": {
-      "title": "From 2.8 to\nModern Blender",
-      "summary": "Your 2.8 knowledge is still very transferrable. The biggest changes between 2.8 and 4.x are Geometry Nodes, Eevee NEXT, and asset library improvements. A quick orientation will get you current.",
-      "steps": [
-        { "id": "basics45", "why": "Skim the 4.5 basics to spot what's new in the interface and feature set." }
-      ],
-      "versionNote": "💡 Most of your 2.8 skills still apply. Key changes to know: Eevee was overhauled into Eevee NEXT, Geometry Nodes replaced the old particle system, and the asset library was significantly improved. The CORE series is your best shortcut to any topic you want to modernize."
-    },
-    "upgrade_from_3x": {
-      "title": "From 3.x to\nBlender 4.x",
-      "summary": "The 3.x to 4.x transition is the smoothest upgrade in Blender's history. Your skills translate almost directly — a brief orientation is all you need.",
-      "steps": [
-        { "id": "basics4x", "why": "A quick walkthrough of what changed in Blender 4.x. Most of your 3.x knowledge applies directly." }
-      ],
-      "versionNote": "✅ Good news: The 3.x to 4.x upgrade is relatively minor. The main additions are Eevee NEXT, bone collections replacing bone layers, and incremental improvements throughout. You're in great shape."
     }
   },
 
   "alsoExplore": {
-    "animation":   [{ "id": "camera",     "icon": "🎬" }, { "id": "coreRig",   "icon": "🦴" }, { "id": "fundComp",  "icon": "🎞" }],
+    "animation":   [{ "id": "camera",     "icon": "🎬" }, { "id": "coreRig",   "icon": "🦴" }],
     "modeling":    [{ "id": "coreSculpt", "icon": "🗿" }, { "id": "modify",    "icon": "🔧" }, { "id": "coreMat",   "icon": "🎨" }],
     "sculpting":   [{ "id": "coreMat",   "icon": "🎨" }, { "id": "coreRig",   "icon": "🦴" }, { "id": "introChar", "icon": "🧍" }],
-    "rigging":     [{ "id": "coreAnim",  "icon": "🎬" }, { "id": "introChar", "icon": "🧍" }, { "id": "fundAnim0", "icon": "✨" }],
+    "rigging":     [{ "id": "coreAnim",  "icon": "🎬" }, { "id": "introChar", "icon": "🧍" }],
     "materials":   [{ "id": "coreLight", "icon": "💡" }, { "id": "coreTex",   "icon": "🖼" }, { "id": "fundDyn",   "icon": "💥" }],
-    "rendering":   [{ "id": "coreMat",   "icon": "🎨" }, { "id": "fundComp",  "icon": "🎞" }, { "id": "coreComp",  "icon": "🎥" }],
+    "rendering":   [{ "id": "coreMat",   "icon": "🎨" }, { "id": "coreComp",  "icon": "🎥" }],
     "vfx":         [{ "id": "coreLight", "icon": "💡" }, { "id": "coreMat",   "icon": "🎨" }, { "id": "camera",    "icon": "🎬" }],
     "gameart":     [{ "id": "rev",       "icon": "🚗" }, { "id": "coreMesh",  "icon": "🧊" }, { "id": "modify",    "icon": "🔧" }],
-    "character":   [{ "id": "coreMat",   "icon": "🎨" }, { "id": "camera",    "icon": "🎬" }, { "id": "fundAnim0", "icon": "✨" }],
-    "grease":      [{ "id": "fundAnim0", "icon": "🎬" }, { "id": "coreMat",   "icon": "🎨" }],
+    "character":   [{ "id": "coreMat",   "icon": "🎨" }, { "id": "camera",    "icon": "🎬" }],
+    "grease":      [{ "id": "coreMat",   "icon": "🎨" }],
     "scripting":   [{ "id": "coreMesh",  "icon": "🧊" }, { "id": "modify",    "icon": "🔧" }],
-    "compositing": [{ "id": "coreLight", "icon": "💡" }, { "id": "fundRender","icon": "⚙️" }]
+    "compositing": [{ "id": "coreLight", "icon": "💡" }]
   }
 }
